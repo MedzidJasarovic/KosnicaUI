@@ -1,0 +1,142 @@
+<div class="dashboard-wrapper anim-fade-in">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="content-header">
+            <div class="welcome">
+                <h1>Dobrodošli nazad, {{ user()?.firstName }}! 👋</h1>
+                <p>Vaš pčelarski asistent je spreman. Evo današnjeg pregleda.</p>
+            </div>
+            <div class="header-badge">
+                <span class="role-badge">{{ user()?.role }}</span>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="glass-card stat-card">
+                <div class="stat-icon">🌳</div>
+                <div class="stat-info">
+                    <span class="label">Pčelinjaci</span>
+                    <span class="value">{{ statsLoading ? '--' : apiaries.length }}</span>
+                </div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-icon">
+                    <img src="assets/hives/hive-farar.png" alt="Hives" class="stat-icon-img">
+                </div>
+                <div class="stat-info">
+                    <span class="label">Košnice</span>
+                    <span class="value">{{ statsLoading ? '--' : (stats?.totalHives ?? 0) }}</span>
+                </div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-icon">🩹</div>
+                <div class="stat-info">
+                    <span class="label">Zadaci</span>
+                    <span class="value">{{ loadingInterventions ? '--' : allPlannedInterventions.length }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="welcome-banner glass-card anim-fade-in">
+            <p>Dobrodošli u svoju košnicu. Vaš pčelarski sistem je spreman.</p>
+            <button class="btn-expand-team" (click)="showTeamModal = true" *ngIf="user()?.role === 'Beekeeper'">
+                👥 Proširite svoj tim
+            </button>
+        </div>
+
+        <div class="dashboard-grid anim-slide-up">
+            <!-- Suggested Actions -->
+            <section class="suggestions-section glass-card">
+                <div class="section-header">
+                    <h2>Predložene akcije 📋</h2>
+                    <span class="badge" *ngIf="allPlannedInterventions.length > 0">{{ allPlannedInterventions.length }}</span>
+                </div>
+                
+                <div class="suggestions-list" *ngIf="!loadingInterventions && plannedInterventions.length > 0">
+                    <div class="suggestion-card" *ngFor="let plan of plannedInterventions" (click)="openIntervention(plan)">
+                        <div class="card-icon badge-{{plan.type}}">
+                            {{ getInterventionTypeName(plan.type).charAt(0) }}
+                        </div>
+                        <div class="card-info">
+                            <span class="type">{{ getInterventionTypeName(plan.type) }}</span>
+                            <span class="meta">
+                                {{ plan.plannedDate | date:'dd.MM.yyyy' }} 
+                                <span *ngIf="plan.apiaryName"> • {{ plan.apiaryName }}</span>
+                            </span>
+                        </div>
+                        <i class="chevron">→</i>
+                    </div>
+                </div>
+
+                <div class="empty-suggestions" *ngIf="!loadingInterventions && plannedInterventions.length === 0">
+                    <span class="icon">✅</span>
+                    <p>Sve akcije su završene. Vaš pčelinjak je u odličnom stanju!</p>
+                </div>
+            </section>
+
+            <!-- Weather Widget -->
+            <section class="weather-section glass-card">
+                <div class="weather-header">
+                    <div class="weather-title">
+                        <span class="apiary-name">{{ currentApiaryName }}</span>
+                        <span class="sub">Vremenska prognoza</span>
+                    </div>
+                    <button class="btn-cycle" (click)="nextApiaryWeather()" *ngIf="apiaries.length > 1">
+                        Sledeći
+                    </button>
+                </div>
+
+                <div class="weather-content" *ngIf="!weatherLoading && weather">
+                    <div class="weather-main-row">
+                        <div class="temp-box">
+                            <span class="temp">{{ weather.temperatureCelsius }}°C</span>
+                            <span class="desc">{{ weather.description }}</span>
+                        </div>
+                        <div class="bee-status-icon">
+                            <img [src]="weather.isSafeToOpen ? 'assets/dashboard/bee-safe.png' : 'assets/dashboard/bee-unsafe.png'" 
+                                 [alt]="weather.isSafeToOpen ? 'Safe' : 'Unsafe'"
+                                 class="bee-img">
+                        </div>
+                    </div>
+                    
+                    <div class="weather-details">
+                        <div class="w-item">
+                            <span class="label">Vetar</span>
+                            <span class="val">{{ weather.windSpeedKmH }} km/h</span>
+                        </div>
+                        <div class="w-item">
+                            <span class="label">Vlažnost</span>
+                            <span class="val">{{ weather.humidityPercent }}%</span>
+                        </div>
+                        <div class="w-item safe-status" [class.danger]="!weather.isSafeToOpen">
+                            <span class="label">{{ weather.isSafeToOpen ? 'Bezbedno' : 'Nije bezbedno' }}</span>
+                            <span class="val">za rad</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-loading" *ngIf="weatherLoading">
+                    Učitavanje prognoze...
+                </div>
+
+                <div class="weather-empty" *ngIf="!weatherLoading && !weather">
+                    <p>Podaci za ovaj pčelinjak nisu dostupni.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <app-intervention-detail-modal
+        *ngIf="showInterventionModal && selectedIntervention"
+        [intervention]="selectedIntervention"
+        (closed)="showInterventionModal = false"
+        (updated)="onInterventionUpdated()">
+    </app-intervention-detail-modal>
+
+    <app-add-team-member-modal
+        *ngIf="showTeamModal"
+        (closed)="showTeamModal = false"
+        (added)="showTeamModal = false">
+    </app-add-team-member-modal>
+</div>

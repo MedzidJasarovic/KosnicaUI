@@ -1,0 +1,52 @@
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<div class="modal-panel anim-fade-in">
+    <div class="modal-header">
+        <h2>Nova košnica [{{ gridX }}, {{ gridY }}]</h2>
+        <button class="close-btn" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-grid">
+            <div class="form-group full">
+                <label for="hive-id">Identifikacijski broj / Naziv</label>
+                <input id="hive-id" type="text" [(ngModel)]="identifier" placeholder="npr. 101, A12..."
+                    class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label for="hive-type">Tip košnice</label>
+                <select id="hive-type" [(ngModel)]="type" class="form-input">
+                    <option *ngFor="let t of hiveTypes" [value]="t">{{ t }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="supers">Broj nastavaka</label>
+                <input id="supers" type="number" [(ngModel)]="numberOfSupers" min="1" max="3" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label for="queen">Status matice</label>
+                <input id="queen" type="text" [(ngModel)]="queenStatus" placeholder="npr. 2024, Plava..."
+                    class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label for="strength">Snaga zajednice</label>
+                <select id="strength" [(ngModel)]="colonyStrength" class="form-input">
+                    <option *ngFor="let s of strengths" [value]="s">{{ s }}</option>
+                </select>
+            </div>
+        </div>
+
+        <p class="error-msg" *ngIf="error">{{ error }}</p>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" (click)="onClose()">Odustani</button>
+            <button class="btn-primary" (click)="onSubmit()" [disabled]="!identifier.trim() || isSubmitting">
+                {{ isSubmitting ? 'Spremanje...' : '✅ Spremi košnicu' }}
+            </button>
+        </div>
+    </div>
+</div>

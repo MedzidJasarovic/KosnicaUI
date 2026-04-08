@@ -1,0 +1,213 @@
+<div class="modal-backdrop" (click)="closed.emit()"></div>
+
+<div class="modal-panel anim-fade-in large-modal">
+    <div class="modal-header">
+        <h2>Košnica {{ hive.identifier }}</h2>
+        <button class="close-btn" (click)="closed.emit()">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn" [class.active]="activeTab === 'details'"
+            (click)="activeTab = 'details'">Detalji</button>
+        <button class="tab-btn" [class.active]="activeTab === 'interventions'"
+            (click)="activeTab = 'interventions'">Intervencije</button>
+    </div>
+
+    <div class="modal-body scrollable-body">
+
+        <!-- Tab: Details -->
+        <div *ngIf="activeTab === 'details'" class="tab-content">
+            <div class="info-card" *ngIf="!editMode">
+                <div class="detail-row">
+                    <span class="label">Tip košnice:</span>
+                    <span class="val">{{ hive.type }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Broj nastavaka:</span>
+                    <span class="val">{{ hive.numberOfSupers }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status matice:</span>
+                    <span class="val">{{ hive.queenStatus }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Snaga pčelinjeg društva:</span>
+                    <span class="val">{{ hive.colonyStrength }}</span>
+                </div>
+
+                <div class="actions-row">
+                    <button class="btn-outline" (click)="editMode = true">✏️ Uredi</button>
+                    <button class="btn-outline text-danger" (click)="deleteHive()">🗑️ Obriši košnicu</button>
+                </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div class="form-section glass-card" *ngIf="editMode">
+                <h3>Uredi postavke</h3>
+                <div class="form-group">
+                    <label>Identifikator / Ime</label>
+                    <input type="text" [(ngModel)]="editIdentifier" class="form-input">
+                </div>
+                <div class="form-group split">
+                    <div>
+                        <label>Tip košnice</label>
+                        <select [(ngModel)]="editType" class="form-input">
+                            <option value="LR">LR (Langstrot-Rutova)</option>
+                            <option value="DB">DB (Dadan-Blatova)</option>
+                            <option value="Farar">Farar</option>
+                            <option value="Other">Ostalo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Broj nastavaka (1-3)</label>
+                        <input type="number" min="1" max="3" [(ngModel)]="editSupers" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group split">
+                    <div>
+                        <label>Status matice</label>
+                        <select [(ngModel)]="editQueenStatus" class="form-input">
+                            <option value="Nepoznato">Nepoznato</option>
+                            <option value="Mlada">Mlada</option>
+                            <option value="Stara">Stara</option>
+                            <option value="Roj">Roj</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Snaga pčelinjeg društva</label>
+                        <select [(ngModel)]="editStrength" class="form-input">
+                            <option value="Slabo">Slabo</option>
+                            <option value="Srednje">Srednje</option>
+                            <option value="Jako">Jako</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="actions-row">
+                    <button class="btn-outline" (click)="resetEditForm()">Otkaži</button>
+                    <button class="btn-primary" (click)="saveHive()" [disabled]="!editIdentifier || isUpdating">
+                        {{ isUpdating ? 'Spremanje...' : 'Spremi izmene' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Interventions -->
+        <div *ngIf="activeTab === 'interventions'" class="tab-content">
+            <div class="actions-row-spaced" style="margin-bottom: 20px;">
+                <select [(ngModel)]="statusFilter" class="form-input filter-dropdown small">
+                    <option value="all">Sve intervencije</option>
+                    <option value="Planned">Planirano</option>
+                    <option value="Completed">Završeno</option>
+                    <option value="Skipped">Preskočeno</option>
+                </select>
+                <button class="btn-new" *ngIf="!showAddIntervention" (click)="showAddIntervention = true">+ Nova
+                    intervencija</button>
+            </div>
+
+            <!-- Add Intervention Form -->
+            <div class="form-section glass-card" *ngIf="showAddIntervention">
+                <h3>Evidentiraj intervenciju</h3>
+                <div class="form-group split">
+                    <div>
+                        <label>Tip intervencije</label>
+                        <select [(ngModel)]="intType" class="form-input">
+                            <option [value]="0">Prolećni pregled</option>
+                            <option [value]="1">Uzimljavanje</option>
+                            <option [value]="2">Prihranjivanje</option>
+                            <option [value]="3">Vrcanje</option>
+                            <option [value]="4">Tretman Lekovima</option>
+                            <option [value]="5">Ostalo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Datum</label>
+                        <input type="date" [(ngModel)]="intPlannedDate" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select [(ngModel)]="intStatus" class="form-input">
+                        <option [value]="0">Planirano</option>
+                        <option [value]="1">Završeno</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Opis / Napomena</label>
+                    <input type="text" [(ngModel)]="intDescription" placeholder="Detalji intervencije..."
+                        class="form-input">
+                </div>
+                <div class="actions-row">
+                    <button class="btn-outline" (click)="showAddIntervention = false">Otkaži</button>
+                    <button class="btn-primary" (click)="addIntervention()" [disabled]="isSubmittingIntervention">
+                        {{ isSubmittingIntervention ? 'Spremanje...' : 'Evidentiraj' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interventions List -->
+            <div *ngIf="loadingInterventions" class="loading-state">Učitavanje...</div>
+            <div *ngIf="!loadingInterventions && filteredInterventions.length === 0 && !showAddIntervention"
+                class="empty-state">
+                <p>Nema zabeleženih intervencija za ove kriterije.</p>
+            </div>
+
+            <div class="interventions-list" *ngIf="!loadingInterventions && filteredInterventions.length > 0">
+                <div class="intervention-card" *ngFor="let intv of filteredInterventions">
+                    <div class="intv-header">
+                        <span class="intv-type badge-{{intv.type}}">{{ getInterventionTypeName(intv.type) }}</span>
+                        <span class="intv-date">{{ intv.plannedDate | date:'dd.MM.yyyy' }}</span>
+                    </div>
+                    <div class="intv-body" *ngIf="intv.description">
+                        <p>{{ intv.description }}</p>
+                    </div>
+                    <div class="intv-footer">
+                        <div class="status-group">
+                            <span class="status-badge"
+                                [class.success]="isStatus(intv.status, 'Completed')"
+                                [class.warning]="isStatus(intv.status, 'Planned')"
+                                [class.gray]="isStatus(intv.status, 'Skipped')">
+                                {{ getStatusName(intv.status) }}
+                            </span>
+
+                            <!-- Action buttons for Planned interventions -->
+                            <div class="quick-actions" *ngIf="isStatus(intv.status, 'Planned')">
+                                <button class="btn-text success" (click)="markAsCompleted(intv.id)"
+                                    title="Označi kao završeno">✓ Završi</button>
+                                <button class="btn-text danger" (click)="markAsSkipped(intv.id)"
+                                    title="Preskoči ovu intervenciju">⚡ Preskoči</button>
+                            </div>
+                        </div>
+                        <button class="btn-icon btn-danger small" title="Obriši"
+                            (click)="deleteIntervention(intv.id)">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Custom Delete Confirm Modal for Hive -->
+<app-confirm-modal 
+    [isOpen]="showDeleteHiveConfirm" 
+    title="Obriši košnicu" 
+    message="Jeste li sigurni da želite obrisati ovu košnicu? Svi podaci o košnici i njene intervencije će biti trajno obrisani." 
+    confirmText="Obriši košnicu" 
+    cancelText="Odustani" 
+    [isDanger]="true"
+    (confirmed)="onConfirmDeleteHive()" 
+    (cancelled)="onCancelDelete()">
+</app-confirm-modal>
+
+<!-- Custom Delete Confirm Modal for Intervention -->
+<app-confirm-modal 
+    [isOpen]="showDeleteIntvConfirm" 
+    title="Obriši intervenciju" 
+    message="Jeste li sigurni da želite obrisati ovu intervenciju iz dnevnika?" 
+    confirmText="Obriši" 
+    cancelText="Odustani" 
+    [isDanger]="true"
+    (confirmed)="onConfirmDeleteIntv()" 
+    (cancelled)="onCancelDelete()">
+</app-confirm-modal>

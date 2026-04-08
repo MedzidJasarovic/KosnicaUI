@@ -1,0 +1,79 @@
+<div class="modal-backdrop anim-fade-in" (click)="closed.emit()"></div>
+
+<div class="modal-panel anim-slide-up">
+    <div class="modal-header">
+        <div class="header-content">
+            <span class="shipment-icon">📦</span>
+            <h2>Nova Pošiljka</h2>
+        </div>
+        <button class="close-btn" (click)="closed.emit()">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="error-banner anim-fade-in" *ngIf="errorMessage">
+            <span class="error-icon">⚠️</span>
+            <p>{{ errorMessage }}</p>
+            <button class="close-error" (click)="errorMessage = null">✕</button>
+        </div>
+
+        <div class="info-banner" *ngIf="!errorMessage">
+            <span class="icon">🚛</span>
+            <p>Evidentirate otpremu proizvoda iz Vašeg magacina. Količine će biti automatski oduzete od trenutnog stanja.</p>
+        </div>
+
+        <div class="form-section">
+            <label class="section-label">Detalji Primaoca</label>
+            <div class="input-wrapper">
+                <input type="text" [(ngModel)]="receiverName" placeholder="Ime osobe ili naziv firme primaoca..." class="form-input">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <label class="section-label">Proizvodi za Slanje</label>
+            
+            <div class="stacking-bars">
+                <div class="product-bar anim-fade-in" *ngFor="let row of rows; let i = index">
+                    <div class="bar-field product-select-col">
+                        <label *ngIf="i === 0">Tip Proizvoda</label>
+                        <div class="select-wrapper">
+                            <img class="select-icon-img" *ngIf="row.productType !== null" [src]="getProductIcon(row.productType)">
+                            <span class="select-icon" *ngIf="row.productType === null">🔍</span>
+                            <select [(ngModel)]="row.productType" class="form-input with-icon">
+                                <option [ngValue]="null" disabled>Odaberite...</option>
+                                <option *ngFor="let p of allProducts" [ngValue]="p.id" [disabled]="!isProductAvailable(p.id, i)">
+                                    {{ p.label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bar-field quantity-col">
+                        <label *ngIf="i === 0">Količina (kg)</label>
+                        <input type="number" [(ngModel)]="row.quantity" min="0.1" step="0.1" placeholder="0.0" class="form-input">
+                    </div>
+
+                    <div class="bar-field action-col" [class.with-label]="i === 0">
+                        <label *ngIf="i === 0">&nbsp;</label>
+                        <button class="btn-icon danger" *ngIf="rows.length > 1" (click)="removeRow(i)">🗑️</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-add-row" [disabled]="!canAddNewRow" (click)="addRow()">
+                + Dodaj proizvod u pošiljku
+            </button>
+        </div>
+
+        <div class="form-section">
+            <label class="section-label">Opis / Napomena</label>
+            <textarea [(ngModel)]="description" placeholder="Dodatne info o pošiljci..." class="form-input textarea" rows="2"></textarea>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn-cancel" (click)="closed.emit()">Otkaži</button>
+        <button class="btn-primary" (click) ="saveShipments()" [disabled]="!canSubmit || isSubmitting">
+            {{ isSubmitting ? 'Obrada...' : 'Potvrdi Pošiljku' }}
+        </button>
+    </div>
+</div>

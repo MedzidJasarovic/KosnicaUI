@@ -1,0 +1,27 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-circle">🐝</div>
+        <span class="logo-text">Košnica</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <img src="assets/hives/hive-farar.png" alt="Dashboard" class="nav-icon-img"> Dashboard
+        </a>
+        <a class="nav-item" routerLink="/apiaries" routerLinkActive="active">
+            <span class="icon">🌳</span> Pčelinjaci
+        </a>
+        <a class="nav-item" routerLink="/interventions" routerLinkActive="active">
+            <span class="icon">🩹</span> Intervencije
+        </a>
+        <a class="nav-item" routerLink="/storage" routerLinkActive="active">
+            <img src="assets/bee-in-box.png" alt="Storage" class="nav-icon-img"> Magacin
+        </a>
+    </nav>
+
+    <div class="spacer"></div>
+
+    <button class="logout-btn" (click)="onLogout()">
+        <span class="icon">🚪</span> Izloguj se
+    </button>
+</aside>

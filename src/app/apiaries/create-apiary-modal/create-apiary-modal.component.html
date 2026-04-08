@@ -1,0 +1,38 @@
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<div class="modal-panel anim-fade-in">
+    <div class="modal-header">
+        <h2>{{ apiaryToEdit ? 'Uredi pčelinjak' : 'Novi pčelinjak' }}</h2>
+        <button class="close-btn" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="map-section">
+            <p class="map-hint">
+                📍 Kliknite na mapu da odaberete lokaciju pčelinjaka
+            </p>
+            <div id="apiary-map"></div>
+            <div class="coords-display" *ngIf="lat !== null && lng !== null">
+                <span>📌 {{ lat }}, {{ lng }}</span>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="apiary-name">Naziv pčelinjaka</label>
+                <input id="apiary-name" type="text" [(ngModel)]="name" placeholder="npr. Pčelinjak Brezovac"
+                    class="form-input" />
+            </div>
+
+            <p class="error-msg" *ngIf="error">{{ error }}</p>
+
+            <div class="hint-msg" *ngIf="lat === null">
+                ℹ️ Odaberite lokaciju klikom na mapu
+            </div>
+
+            <button class="btn-primary" (click)="onSubmit()" [disabled]="!canSubmit">
+                {{ isSubmitting ? 'Spremanje...' : (apiaryToEdit ? '✅ Spremi izmjene' : '✅ Kreiraj pčelinjak') }}
+            </button>
+        </div>
+    </div>
+</div>

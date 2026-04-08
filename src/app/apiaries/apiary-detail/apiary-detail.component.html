@@ -1,0 +1,149 @@
+<div class="dashboard-wrapper anim-fade-in">
+    <app-sidebar></app-sidebar>
+
+    <div class="content-split">
+        <main class="main-content">
+            <header class="content-header">
+                <div class="welcome">
+                    <div class="breadcrumb">
+                        <a routerLink="/apiaries">Pčelinjaci</a> <span>/</span> {{ apiary?.name }}
+                    </div>
+                    <h1>{{ apiary?.name }} 🌳</h1>
+                    <p>Raspored košnica na terenu.</p>
+                </div>
+                <div class="apiary-meta" *ngIf="apiary">
+                    <div class="badge">📍 {{ apiary.latitude }}, {{ apiary.longitude }}</div>
+                </div>
+            </header>
+
+            <div class="actions-bar glass-card anim-fade-in" *ngIf="!loading">
+                <div class="filter-section">
+                    <label for="hiveFilter">🔍 Predložene akcije:</label>
+                    <select id="hiveFilter" [(ngModel)]="activeFilter" class="form-input filter-dropdown">
+                        <option value="all">Sve košnice (Bez isticanja)</option>
+                        <option value="needsFeeding">Potrebno prihranjivanje (Nema zapisa u 30 dana)</option>
+                        <option value="needsSpringInspection">Prolećni pregled (Period: Mart - April)</option>
+                        <option value="needsWintering">Uzimljavanje (Period: Novembar - Decembar)</option>
+                    </select>
+                </div>
+                <div class="bulk-section">
+                    <button class="btn-primary" (click)="showBulkModal = true">
+                        📅 Planiranje (Sve košnice)
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid-container glass-card" *ngIf="!loading">
+                <div class="apiary-field">
+                    <div class="grid-row" *ngFor="let y of gridRows">
+                        <div class="grid-cell" *ngFor="let x of gridCols" [class.occupied]="getHiveAt(x, y)"
+                            (click)="onCellClick(x, y)">
+
+                            <!-- Hive visualization -->
+                            <div class="hive-wrapper" *ngIf="getHiveAt(x, y) as hive"
+                                [class.needs-attention]="hiveNeedsAttention(hive.id)">
+                                <img [src]="getHiveIcon(hive.type)" [alt]="hive.type" class="hive-img">
+                                <span class="hive-id">{{ hive.identifier }}</span>
+                                <div class="supers-dots">
+                                    <div class="dot" *ngFor="let s of [].constructor(hive.numberOfSupers)"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hover indicator for empty cells -->
+                            <div class="cell-hover" *ngIf="!getHiveAt(x, y)">
+                                <span class="add-icon">+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-legend">
+                    <div class="legend-item">
+                        <span class="box empty"></span> Slobodno polje
+                    </div>
+                    <div class="legend-item">
+                        <span class="box occupied">
+                            <img src="assets/hives/hive-farar.png" alt="Hive" class="legend-icon">
+                        </span> Zauzeto polje
+                    </div>
+                    <p class="hint">💡 Kliknite na prazno polje da dodate novu košnicu.</p>
+                </div>
+            </div>
+
+            <div class="skeleton-grid" *ngIf="loading">
+                <div class="glass-card skeleton" style="height: 500px; width: 100%;"></div>
+            </div>
+        </main>
+
+        <aside class="right-sidebar" *ngIf="!loading">
+            <h3>Zaostali poslovi</h3>
+            <p class="subtitle" [style.visibility]="(missingHarvests.length > 0 || missingTreatments.length > 0) ? 'visible' : 'hidden'">
+                Zabeležili ste radove, ali niste upisali detalje o prinosu ili lekovima.
+            </p>
+            
+            <div class="tasks-wrapper glass-card">
+                <div class="tasks-list">
+                    <!-- Harvest Tasks (Visible to Beekeeper & Assistant) -->
+                    <div class="missing-card anim-slide-up" *ngFor="let h of missingHarvests" (click)="openYieldModal(h)">
+                        <div class="card-icon">🍯</div>
+                        <div class="card-info">
+                            <strong>Neregistrovan prinos</strong>
+                            <span>Košnica: {{ h.hiveIdentifier }}</span>
+                            <small>Datum: {{ h.harvestDate | date:'dd.MM.yyyy' }}</small>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Tasks (Visible to Beekeeper & Veterinarian) -->
+                    <div class="missing-card anim-slide-up treatment-task" *ngFor="let t of missingTreatments" (click)="openTreatmentModal(t)">
+                        <div class="card-icon">💊</div>
+                        <div class="card-info">
+                            <strong>Neregistrovan tretman</strong>
+                            <span>Košnica: {{ t.hiveIdentifier }}</span>
+                            <small>Datum: {{ t.treatmentDate | date:'dd.MM.yyyy' }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-tasks" *ngIf="missingHarvests.length === 0 && missingTreatments.length === 0">
+                    <img src="assets/resting-bee.png" alt="Resting Bee" class="resting-bee-img">
+                    <p>Nema zaostalih poslova...</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Create Hive Modal -->
+<app-create-hive-modal *ngIf="showCreateHiveModal" [apiaryId]="apiaryId" [gridX]="selectedX!" [gridY]="selectedY!"
+    (closed)="showCreateHiveModal = false" (created)="onHiveCreated()">
+</app-create-hive-modal>
+
+<!-- Hive Detail Modal -->
+<app-hive-detail-modal *ngIf="showHiveDetailModal" [apiaryId]="apiaryId" [hive]="selectedHive!"
+    (closed)="onHiveDetailModalClosed()" (updatedOrDeleted)="onHiveUpdatedOrDeleted()">
+</app-hive-detail-modal>
+
+<!-- Bulk Intervention Modal -->
+<app-bulk-intervention-modal *ngIf="showBulkModal" [apiaryId]="apiaryId"
+    (closed)="showBulkModal = false" (created)="onBulkModalCreated()">
+</app-bulk-intervention-modal>
+
+<!-- Yield Logging Modal -->
+<app-yield-logging-modal *ngIf="showYieldModal" 
+    [apiaryId]="apiaryId" 
+    [hiveId]="yieldModalHiveId" 
+    [hiveIdentifier]="yieldModalHiveIdentifier"
+    [harvestDate]="yieldModalHarvestDate"
+    (closed)="showYieldModal = false" 
+    (saved)="onYieldModalSaved()">
+</app-yield-logging-modal>
+
+<!-- Treatment Logging Modal -->
+<app-treatment-logging-modal *ngIf="showTreatmentModal"
+    [hiveId]="treatmentModalHiveId"
+    [interventionId]="treatmentModalInterventionId"
+    [hiveIdentifier]="treatmentModalHiveIdentifier"
+    [treatmentDate]="treatmentModalDate"
+    (closed)="showTreatmentModal = false"
+    (saved)="onTreatmentModalSaved()">
+</app-treatment-logging-modal>

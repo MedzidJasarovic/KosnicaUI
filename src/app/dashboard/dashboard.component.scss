@@ -1,0 +1,311 @@
+.dashboard-wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--c-white-off);
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .welcome {
+            h1 {
+                margin: 0;
+                font-size: 28px;
+                font-weight: 700;
+            }
+
+            p {
+                margin: 5px 0 0;
+                color: var(--c-gray-light);
+            }
+        }
+
+        .header-badge {
+            .role-badge {
+                background: var(--c-amber);
+                color: var(--c-charcoal);
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 24px;
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(46, 125, 50, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            .stat-icon-img {
+                width: 36px;
+                height: auto;
+                object-fit: contain;
+            }
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+
+            .label {
+                font-size: 14px;
+                color: var(--c-gray-light);
+            }
+
+            .value {
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--c-charcoal);
+            }
+        }
+    }
+
+    .welcome-banner {
+        padding: 20px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        background: linear-gradient(135deg, #fff 0%, #fffbeb 100%);
+        border-left: 5px solid var(--c-amber);
+        border-radius: 16px;
+
+        p { margin: 0; font-weight: 600; color: #78350f; }
+
+        .btn-expand-team {
+            background: var(--c-amber);
+            color: var(--c-charcoal);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            &:hover { background: var(--c-amber-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,193,7,0.35); }
+        }
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 25px;
+        margin-top: -10px;
+
+        @media (max-width: 1024px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .suggestions-section, .weather-section {
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .section-header, .weather-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            h2 { font-size: 18px; margin: 0; font-weight: 700; color: #424242; }
+            .badge {
+                background: #ef4444; color: white;
+                padding: 2px 8px; border-radius: 10px;
+                font-size: 12px; font-weight: 800;
+            }
+        }
+    }
+
+    .suggestions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 340px;
+        overflow-y: auto;
+        padding-right: 4px;
+
+        &::-webkit-scrollbar { width: 4px; }
+        &::-webkit-scrollbar-track { background: transparent; }
+        &::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+    }
+
+    .suggestion-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 18px;
+        background: #fdfdfd;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        transition: all 0.2s;
+        cursor: pointer;
+
+        &:hover {
+            transform: translateX(5px);
+            border-color: var(--c-amber);
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 14px;
+        }
+
+        .card-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            
+            .type { font-weight: 700; font-size: 15px; color: #333; }
+            .meta { font-size: 12px; color: #999; }
+        }
+
+        .chevron { color: #ccc; font-style: normal; }
+    }
+
+    .weather-section {
+        background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
+        color: white;
+        border: none;
+        border-radius: 16px;
+
+        .weather-header {
+            .apiary-name { font-weight: 800; font-size: 18px; display: block; }
+            .sub { font-size: 12px; opacity: 0.8; }
+            .btn-cycle {
+                background: rgba(255,255,255,0.2);
+                border: none; color: white;
+                padding: 6px 14px; border-radius: 10px;
+                cursor: pointer; font-size: 13px; font-weight: 700;
+                transition: all 0.2s;
+                &:hover { 
+                    background: rgba(255,255,255,0.3);
+                    transform: translateY(-1px);
+                }
+            }
+        }
+
+        .weather-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px 0;
+
+            .weather-main-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 10px 0;
+
+                .temp-box {
+                    .temp { font-size: 52px; font-weight: 800; display: block; line-height: 1; }
+                    .desc { font-size: 16px; font-weight: 600; text-transform: capitalize; opacity: 0.9; }
+                }
+
+                .bee-status-icon {
+                    .bee-img {
+                        width: 80px;
+                        height: auto;
+                        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+                    }
+                }
+            }
+
+            .weather-details {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+                background: rgba(0,0,0,0.1);
+                padding: 15px;
+                border-radius: 12px;
+                margin-top: 15px;
+
+                .w-item {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    .label { font-size: 11px; opacity: 0.8; text-transform: uppercase; margin-bottom: 2px; }
+                    .val { font-size: 14px; font-weight: 700; }
+
+                    &.safe-status {
+                        color: #4ade80;
+                        &.danger { color: #f87171; }
+                    }
+                }
+            }
+        }
+    }
+
+    .badge-0, .badge-SpringInspection { background-color: #4caf50; }
+    .badge-1, .badge-Wintering { background-color: #2196f3; }
+    .badge-2, .badge-Feeding { background-color: #ff9800; }
+    .badge-3, .badge-Harvest { background-color: #fbc02d; }
+    .badge-4, .badge-Treatment { background-color: #e91e63; }
+    .badge-5, .badge-Other { background-color: #9c27b0; }
+
+    .empty-suggestions {
+        text-align: center;
+        padding: 20px;
+        color: #999;
+        .icon { font-size: 40px; display: block; margin-bottom: 10px; }
+    }
+}
+
+.glass-card {
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.anim-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.anim-slide-up { animation: slideUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}

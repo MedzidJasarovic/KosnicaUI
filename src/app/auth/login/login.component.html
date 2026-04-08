@@ -1,0 +1,35 @@
+<div class="auth-wrapper anim-fade-in">
+    <div class="glass-card auth-card">
+        <div class="auth-header">
+            <div class="logo-circle">🐝</div>
+            <h1>Dobrodošli u Košnicu</h1>
+            <p>Logujte se na vaš pčelarski nalog</p>
+        </div>
+
+        <form class="auth-form" (ngSubmit)="onLogin()">
+            <div class="form-group">
+                <label for="email">E-mail adresa</label>
+                <input type="email" id="email" class="input-base" placeholder="beemaster@example.com"
+                    [(ngModel)]="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Lozinka</label>
+                <input type="password" id="password" class="input-base" placeholder="Vaša tajna lozinka"
+                    [(ngModel)]="password" name="password" required>
+            </div>
+
+            <div class="error-message" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <button type="submit" class="btn-primary" [disabled]="isLoading">
+                {{ isLoading ? 'Učitavanje...' : 'Prijavi se' }}
+            </button>
+
+            <div class="auth-footer">
+                Nemaš nalog? <a routerLink="/register">Registruj se</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="modal-overlay" (click)="closed.emit()">
+    <div class="modal-content glass-card anim-slide-up" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <div class="header-main">
+                <span class="type-badge badge-{{intervention.type}}">
+                    {{ getInterventionTypeName(intervention.type) }}
+                </span>
+                <h2>Detalji zadatka</h2>
+            </div>
+            <button class="btn-close" (click)="closed.emit()">×</button>
+        </header>
+
+        <main class="modal-body">
+            <div class="info-section">
+                <div class="info-group">
+                    <label>Lokacija</label>
+                    <div class="location-info">
+                        <span class="apiary">🌲 {{ intervention.apiaryName }}</span>
+                        <span class="hive" *ngIf="intervention.hiveIdentifier">
+                            / Košnica: <strong>{{ intervention.hiveIdentifier }}</strong>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <label>Planirani datum</label>
+                    <div class="date-row" *ngIf="!editMode">
+                        <div class="date-info">📅 {{ intervention.plannedDate | date:'dd. MMMM yyyy' }}</div>
+                        <button class="btn-text" (click)="editMode = true">Odloži (Promeni datum)</button>
+                    </div>
+                    <div class="date-edit" *ngIf="editMode">
+                        <input type="date" [(ngModel)]="editedDate" class="input-base">
+                        <div class="edit-actions">
+                            <button class="btn-text cancel" (click)="editMode = false">Odustani</button>
+                            <button class="btn-text save" (click)="delayTask()">Spremi novi datum</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <label>Opis / Beleška</label>
+                    <div class="description-text">
+                        {{ intervention.description || 'Nema dodatnih beleški za ovaj zadatak.' }}
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="modal-footer">
+            <div class="action-buttons">
+                <button class="btn-cancel" (click)="cancelTask()" [disabled]="loading">
+                    Otkaži zadatak
+                </button>
+                <div class="main-actions">
+                    <button class="btn-secondary" (click)="closed.emit()" [disabled]="loading">Zatvori</button>
+                    <button class="btn-success" (click)="completeTask()" [disabled]="loading">
+                        <span *ngIf="!loading">Označi kao završeno</span>
+                        <span *ngIf="loading" class="spinner"></span>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    width: 500px;
+    max-width: 90vw;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    border-bottom: 1px solid #eee;
+
+    h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #888;
+
+        &:hover {
+            color: #333;
+        }
+    }
+}
+
+.modal-body {
+    padding: 28px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &.full {
+        grid-column: span 2;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #666;
+    }
+}
+
+.form-input {
+    padding: 12px 14px;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus {
+        border-color: var(--c-amber, #f9a825);
+        background: rgba(249, 168, 37, 0.02);
+    }
+}
+
+.error-msg {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #e53935;
+    text-align: center;
+}
+
+.modal-footer {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+
+    button {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel {
+        background: #f5f5f5;
+        border: none;
+        color: #666;
+
+        &:hover {
+            background: #eee;
+        }
+    }
+
+    .btn-primary {
+        background: var(--c-amber, #f9a825);
+        border: none;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+            background: #e65100;
+            transform: translateY(-1px);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.anim-fade-in {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}

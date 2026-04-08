@@ -1,0 +1,48 @@
+<div class="auth-wrapper anim-fade-in">
+    <div class="glass-card auth-card">
+        <div class="auth-header">
+            <div class="logo-circle">🌻</div>
+            <h1>Novi Pčelinjak</h1>
+            <p>Kreiraj nalog kao vlasnik farme</p>
+        </div>
+
+        <form class="auth-form" (ngSubmit)="onRegister()">
+            <div class="form-row">
+                <div class="form-group flex-1">
+                    <label for="firstName">Ime</label>
+                    <input type="text" id="firstName" class="input-base" placeholder="Vaše ime"
+                        [(ngModel)]="dto.firstName" name="firstName" required>
+                </div>
+                <div class="form-group flex-1">
+                    <label for="lastName">Prezime</label>
+                    <input type="text" id="lastName" class="input-base" placeholder="Vaše prezime"
+                        [(ngModel)]="dto.lastName" name="lastName" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail adresa</label>
+                <input type="email" id="email" class="input-base" placeholder="beemaster@example.com"
+                    [(ngModel)]="dto.email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Lozinka</label>
+                <input type="password" id="password" class="input-base" placeholder="Tajna lozinka"
+                    [(ngModel)]="dto.password" name="password" required>
+            </div>
+
+            <div class="error-message" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <button type="submit" class="btn-primary" [disabled]="isLoading">
+                {{ isLoading ? 'Učitavanje...' : 'Registruj se' }}
+            </button>
+
+            <div class="auth-footer">
+                Već imate nalog? <a routerLink="/login">Prijavi se</a>
+            </div>
+        </form>
+    </div>
+</div>

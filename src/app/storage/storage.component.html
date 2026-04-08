@@ -1,0 +1,116 @@
+<div class="dashboard-wrapper anim-fade-in">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="content-header">
+            <div class="header-main">
+                <div class="welcome">
+                    <div class="title-with-icon">
+                        <h1>Magacin</h1>
+                        <img src="assets/bee-in-box.png" alt="Magacin" class="page-icon">
+                    </div>
+                    <p *ngIf="viewMode === 'all'">Pregled ukupno proizvedenih i upisanih zaliha unutar Vašeg domaćinstva.</p>
+                    <p *ngIf="viewMode === 'current'">Pregled trenutno dostupnih zaliha spremnih za otpremu.</p>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="view-toggle">
+                        <button [class.active]="viewMode === 'current'" (click)="setViewMode('current')">Trenutno stanje</button>
+                        <button [class.active]="viewMode === 'all'" (click)="setViewMode('all')">Ukupno proizvedeno</button>
+                    </div>
+                    <button class="btn-shipment" (click)="showShipmentModal = true">
+                        <span class="icon">🚛</span> Evidentiraj Pošiljku
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-grid" *ngIf="!loading">
+            <div class="glass-card stat-card anim-slide-up" *ngFor="let stat of statistics; let i = index" [style.animationDelay]="(i * 0.1) + 's'">
+                <div class="stat-icon-wrapper" *ngIf="getDisplayData(stat.productType) as d">
+                    <img [src]="d.icon" [alt]="d.label" class="stat-icon-img">
+                </div>
+                <div class="stat-info" *ngIf="getDisplayData(stat.productType) as d">
+                    <h3>{{ d.label }}</h3>
+                    <div class="quantity">
+                        <span class="value">{{ stat.totalQuantity }}</span>
+                        <span class="unit">{{ d.unit }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="empty-state glass-card" *ngIf="statistics.length === 0">
+                <span class="empty-icon">🕸️</span>
+                <h3 *ngIf="viewMode === 'all'">Magacin je prazan</h3>
+                <h3 *ngIf="viewMode === 'current'">Nemate dostupnih zaliha</h3>
+                <p>Za sada nemate zabilježenih zapisa u ovom modu.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid" *ngIf="loading">
+             <div class="glass-card skeleton stat-card"></div>
+             <div class="glass-card skeleton stat-card"></div>
+             <div class="glass-card skeleton stat-card"></div>
+        </div>
+
+        <!-- ISTORIJA POSILJKI SECTION -->
+        <section class="shipments-history anim-fade-in" *ngIf="!loadingHistory">
+            <div class="section-header">
+                <div class="header-title-group">
+                    <img src="assets/bee-with-suitcase.png" alt="Bee with suitcase" class="history-main-icon">
+                    <h2>Istorija pošiljki</h2>
+                </div>
+                <span class="badge">{{ shipments.length }} ukupno</span>
+            </div>
+
+            <div class="history-wrapper glass-card">
+                <div class="history-list" *ngIf="shipments.length > 0">
+                    <div class="shipment-item" *ngFor="let s of shipments" (click)="openDetails(s)">
+                        <div class="item-icons-stack">
+                            <div class="icon-mini-circle" *ngFor="let item of s.items.slice(0, 3)">
+                                <img [src]="getDisplayData(item.productType).icon" [title]="getDisplayData(item.productType).label">
+                            </div>
+                            <div class="icon-more" *ngIf="s.items.length > 3">
+                                +{{ s.items.length - 3 }}
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-main">
+                                <span class="receiver">Paket za: <strong>{{ s.receiverName }}</strong></span>
+                                <span class="date">{{ s.date | date:'dd.MM.yyyy HH:mm' }}</span>
+                            </div>
+                            <div class="item-meta">
+                                <span class="products-count">{{ s.items.length }} stavki</span>
+                                <span class="desc-preview" *ngIf="s.description">
+                                    {{ s.description.length > 30 ? (s.description | slice:0:30) + '...' : s.description }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-action-hint">
+                            <span>Detalji</span>
+                            <i class="icon-chevron">→</i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-history" *ngIf="shipments.length === 0">
+                    <img src="assets/resting-bee.png" alt="Resting Bee" class="resting-bee-img">
+                    <h3>Još niste napravili svoju prvu pošiljku...</h3>
+                    <p>Sve vaše otpremljene pošiljke biće izlistane ovde hronološkim redom.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <app-shipment-logging-modal 
+        *ngIf="showShipmentModal" 
+        (closed)="showShipmentModal = false"
+        (saved)="onShipmentSaved()">
+    </app-shipment-logging-modal>
+
+    <app-shipment-details-modal
+        *ngIf="showDetailsModal"
+        [shipment]="selectedShipment"
+        (closed)="showDetailsModal = false">
+    </app-shipment-details-modal>
+</div>

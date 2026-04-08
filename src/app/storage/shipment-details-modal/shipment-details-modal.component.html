@@ -1,0 +1,49 @@
+<div class="modal-backdrop anim-fade-in" (click)="closed.emit()"></div>
+
+<div class="modal-panel anim-slide-up" *ngIf="shipment">
+    <div class="modal-header">
+        <div class="header-content">
+            <span class="shipment-icon">🧾</span>
+            <h2>Detalji pošiljke</h2>
+        </div>
+        <button class="close-btn" (click)="closed.emit()">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="summary-card">
+            <div class="summary-info">
+                <div class="info-item">
+                    <label>Primalac:</label>
+                    <span class="value">{{ shipment.receiverName }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Datum:</label>
+                    <span class="value">{{ shipment.date | date:'dd.MM.yyyy HH:mm' }}</span>
+                </div>
+            </div>
+            <div class="info-desc" *ngIf="shipment.description">
+                <label>Napomena:</label>
+                <p>{{ shipment.description }}</p>
+            </div>
+        </div>
+
+        <div class="items-section">
+            <label class="section-label">Sadržaj paketa</label>
+            <div class="items-list">
+                <div class="item-row" *ngFor="let item of shipment.items">
+                    <div class="item-visual">
+                        <img [src]="getDisplayData(item.productType).icon" alt="Icon">
+                    </div>
+                    <div class="item-info">
+                        <span class="name">{{ getDisplayData(item.productType).label }}</span>
+                        <span class="amount">{{ item.quantity }} {{ getDisplayData(item.productType).unit }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn-primary" (click)="closed.emit()">Zatvori</button>
+    </div>
+</div>

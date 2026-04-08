@@ -1,0 +1,199 @@
+<div class="page-wrapper anim-fade-in">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <!-- Header -->
+    <header class="page-header">
+      <div>
+        <h1>Zapisi 📋</h1>
+        <p>Pregled svih intervencija, žetvi i tretmana</p>
+      </div>
+    </header>
+
+    <!-- 3-Part Tab Switcher -->
+    <div class="tab-switcher glass-card">
+      <button class="tab-btn" [class.active]="activeTab === 'interventions'" (click)="setTab('interventions')">
+        <span class="tab-icon">🗂️</span>
+        <span class="tab-label">Intervencije</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'yields'" (click)="setTab('yields')">
+        <span class="tab-icon">🍯</span>
+        <span class="tab-label">Zapisi žetve</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'treatments'" (click)="setTab('treatments')">
+        <span class="tab-icon">💊</span>
+        <span class="tab-label">Tretmani</span>
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar glass-card">
+      <div class="filter-group">
+        <label>Pčelinjak</label>
+        <select [(ngModel)]="selectedApiaryId" (ngModelChange)="onApiaryChange()" class="filter-select">
+          <option [ngValue]="null">Svi pčelinjaci</option>
+          <option *ngFor="let a of apiaries" [ngValue]="a.id">{{ a.name }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Košnica</label>
+        <select [(ngModel)]="selectedHiveId" (ngModelChange)="onHiveChange()" class="filter-select" [disabled]="!selectedApiaryId">
+          <option [ngValue]="null">Sve košnice</option>
+          <option *ngFor="let h of hives" [ngValue]="h.id">{{ h.identifier }}</option>
+        </select>
+      </div>
+
+      <!-- Sub-filter: Intervention type -->
+      <div class="filter-group" *ngIf="activeTab === 'interventions'">
+        <label>Tip intervencije</label>
+        <select [(ngModel)]="selectedInterventionType" (ngModelChange)="load()" class="filter-select">
+          <option *ngFor="let t of interventionTypes" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+
+      <!-- Sub-filter: Product type -->
+      <div class="filter-group" *ngIf="activeTab === 'yields'">
+        <label>Tip proizvoda</label>
+        <select [(ngModel)]="selectedProductType" (ngModelChange)="load()" class="filter-select">
+          <option *ngFor="let p of productTypes" [value]="p.value">{{ p.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner-large"></div>
+      <p>Učitavanje podataka...</p>
+    </div>
+
+    <!-- ======== INTERVENTIONS TABLE ======== -->
+    <div class="records-container" *ngIf="!loading && activeTab === 'interventions'">
+      <div class="results-count" *ngIf="interventions.length > 0">
+        {{ interventions.length }} {{ interventions.length === 1 ? 'intervencija' : 'intervencija' }}
+      </div>
+      <div class="records-list" *ngIf="interventions.length > 0">
+        <div class="record-card int-card" *ngFor="let item of interventions" (click)="openDetail(item)">
+          <div class="card-left">
+            <div class="type-badge badge-{{ item.type }}">{{ getInterventionTypeName(item.type).charAt(0) }}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{{ getInterventionTypeName(item.type) }}</div>
+            <div class="card-meta">
+              <span>📅 {{ item.plannedDate | date:'dd.MM.yyyy' }}</span>
+              <span *ngIf="item.apiaryName">🌲 {{ item.apiaryName }}</span>
+              <span *ngIf="item.hiveIdentifier">🐝 Košnica {{ item.hiveIdentifier }}</span>
+            </div>
+            <div class="card-desc" *ngIf="item.description">{{ item.description }}</div>
+          </div>
+          <div class="card-right">
+            <span class="status-chip" [class]="getStatusClass(item.status)">
+              {{ getInterventionStatusName(item.status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="interventions.length === 0">
+        <div class="empty-icon">🗂️</div>
+        <h3>Nema intervencija</h3>
+        <p>Nema pronađenih intervencija za odabrane filtere.</p>
+      </div>
+    </div>
+
+    <!-- ======== YIELDS TABLE ======== -->
+    <div class="records-container" *ngIf="!loading && activeTab === 'yields'">
+      <div class="results-count" *ngIf="yields.length > 0">{{ yields.length }} zapisa žetve</div>
+      <div class="records-list" *ngIf="yields.length > 0">
+        <div class="record-card yield-card" *ngFor="let item of yields" (click)="openDetail(item)">
+          <div class="card-left">
+            <div class="product-badge">🍯</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{{ getProductTypeName(item.productType) }}</div>
+            <div class="card-meta">
+              <span>📅 {{ item.date | date:'dd.MM.yyyy' }}</span>
+              <span *ngIf="item.apiaryName">🌲 {{ item.apiaryName }}</span>
+              <span *ngIf="item.hiveIdentifier">🐝 Košnica {{ item.hiveIdentifier }}</span>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="quantity-badge">{{ item.quantity }} kg</div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="yields.length === 0">
+        <div class="empty-icon">🍯</div>
+        <h3>Nema zapisa žetve</h3>
+        <p>Nema pronađenih zapisa za odabrane filtere.</p>
+      </div>
+    </div>
+
+    <!-- ======== TREATMENTS TABLE ======== -->
+    <div class="records-container" *ngIf="!loading && activeTab === 'treatments'">
+      <div class="results-count" *ngIf="treatments.length > 0">{{ treatments.length }} tretmana</div>
+      <div class="records-list" *ngIf="treatments.length > 0">
+        <div class="record-card treat-card" *ngFor="let item of treatments" (click)="openDetail(item)">
+          <div class="card-left">
+            <div class="treat-badge">💊</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">{{ item.substanceName }}</div>
+            <div class="card-meta">
+              <span>📅 {{ item.dateApplied | date:'dd.MM.yyyy' }}</span>
+              <span *ngIf="item.dose">💉 Doza: {{ item.dose }}</span>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="treat-chip">Tretman</span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="treatments.length === 0">
+        <div class="empty-icon">💊</div>
+        <h3>Nema tretmana</h3>
+        <p>Nema pronađenih tretmana za odabrane filtere.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Detail Drawer -->
+  <div class="detail-overlay" *ngIf="showDetail" (click)="showDetail = false">
+    <div class="detail-panel" (click)="$event.stopPropagation()">
+      <header class="dp-header">
+        <h3>Detalji zapisa</h3>
+        <button class="btn-close" (click)="showDetail = false">×</button>
+      </header>
+
+      <!-- Intervention detail -->
+      <div class="dp-body" *ngIf="activeTab === 'interventions' && selectedItem">
+        <div class="dp-field"><label>Tip</label><span>{{ getInterventionTypeName(selectedItem.type) }}</span></div>
+        <div class="dp-field"><label>Status</label><span class="status-chip" [class]="getStatusClass(selectedItem.status)">{{ getInterventionStatusName(selectedItem.status) }}</span></div>
+        <div class="dp-field"><label>Pčelinjak</label><span>{{ selectedItem.apiaryName || '—' }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.hiveIdentifier"><label>Košnica</label><span>{{ selectedItem.hiveIdentifier }}</span></div>
+        <div class="dp-field"><label>Planirani datum</label><span>{{ selectedItem.plannedDate | date:'dd. MMMM yyyy' }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.executionDate"><label>Datum izvršenja</label><span>{{ selectedItem.executionDate | date:'dd. MMMM yyyy' }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.description"><label>Opis</label><span>{{ selectedItem.description }}</span></div>
+      </div>
+
+      <!-- Yield detail -->
+      <div class="dp-body" *ngIf="activeTab === 'yields' && selectedItem">
+        <div class="dp-field"><label>Proizvod</label><span>{{ getProductTypeName(selectedItem.productType) }}</span></div>
+        <div class="dp-field"><label>Količina</label><span>{{ selectedItem.quantity }} kg</span></div>
+        <div class="dp-field"><label>Pčelinjak</label><span>{{ selectedItem.apiaryName || '—' }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.hiveIdentifier"><label>Košnica</label><span>{{ selectedItem.hiveIdentifier }}</span></div>
+        <div class="dp-field"><label>Datum</label><span>{{ selectedItem.date | date:'dd. MMMM yyyy' }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.weatherConditions"><label>Vremenski uslovi</label><span>{{ selectedItem.weatherConditions }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.notes"><label>Beleška</label><span>{{ selectedItem.notes }}</span></div>
+      </div>
+
+      <!-- Treatment detail -->
+      <div class="dp-body" *ngIf="activeTab === 'treatments' && selectedItem">
+        <div class="dp-field"><label>Supstanca</label><span>{{ selectedItem.substanceName }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.dose"><label>Doza</label><span>{{ selectedItem.dose }}</span></div>
+        <div class="dp-field"><label>Datum primjene</label><span>{{ selectedItem.dateApplied | date:'dd. MMMM yyyy' }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.beeReaction"><label>Reakcija pčela</label><span>{{ selectedItem.beeReaction }}</span></div>
+        <div class="dp-field" *ngIf="selectedItem.losses"><label>Gubici</label><span>{{ selectedItem.losses }}</span></div>
+      </div>
+    </div>
+  </div>
+</div>

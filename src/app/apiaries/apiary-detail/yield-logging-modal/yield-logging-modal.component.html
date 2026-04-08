@@ -1,0 +1,70 @@
+<div class="modal-backdrop anim-fade-in" (click)="closed.emit()"></div>
+
+<div class="modal-panel anim-slide-up">
+    <div class="modal-header">
+        <div class="header-content">
+            <span class="yield-icon">🍯</span>
+            <h2>Prinos nakon Vrcanja</h2>
+        </div>
+        <button class="close-btn" (click)="closed.emit()">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="info-banner">
+            <span class="icon">🐝</span>
+            <p>Evidentirate prinos za košnicu <strong>{{ hiveIdentifier }}</strong>. <br>
+               Datum vrcanja je detektovan kao: <strong>{{ harvestDate | date:'dd.MM.yyyy' }}</strong>.</p>
+        </div>
+
+        <div class="form-section">
+            <label class="section-label">Proizvodi i Količine</label>
+            
+            <div class="stacking-bars">
+                <div class="product-bar anim-fade-in" *ngFor="let row of rows; let i = index">
+                    
+                    <div class="bar-field product-select-col">
+                        <label *ngIf="i === 0">Tip Proizvoda</label>
+                        <div class="select-wrapper">
+                            <img class="select-icon-img" *ngIf="row.productType !== null" [src]="getProductIcon(row.productType)">
+                            <span class="select-icon" *ngIf="row.productType === null">🔍</span>
+                            <select [(ngModel)]="row.productType" class="form-input with-icon">
+                                <option [ngValue]="null" disabled>Odaberite...</option>
+                                <option *ngFor="let p of getAvailableProducts(i)" [ngValue]="p.id">
+                                    {{ p.label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bar-field quantity-col">
+                        <label *ngIf="i === 0">Količina (kg)</label>
+                        <div class="input-wrapper">
+                            <input type="number" [(ngModel)]="row.quantity" min="0.1" step="0.1" placeholder="0.0" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="bar-field action-col" [class.with-label]="i === 0">
+                        <label *ngIf="i === 0">&nbsp;</label>
+                        <button class="btn-icon danger" *ngIf="rows.length > 1" (click)="removeRow(i)" title="Ukloni red">🗑️</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-add-row" [disabled]="!canAddNewRow" (click)="addRow()">
+                + Dodaj proizvod
+            </button>
+        </div>
+
+        <div class="form-section notes-section">
+            <label class="section-label">Napomena (opciono)</label>
+            <textarea [(ngModel)]="notes" placeholder="Specifičnosti ovog prinosa..." class="form-input textarea" rows="2"></textarea>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn-cancel" (click)="closed.emit()">Otkaži</button>
+        <button class="btn-primary" (click)="saveYields()" [disabled]="!canSubmit || isSubmitting">
+            {{ isSubmitting ? 'Spremanje...' : 'Spremi prinose' }}
+        </button>
+    </div>
+</div>

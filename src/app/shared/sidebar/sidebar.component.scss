@@ -1,0 +1,7 @@
+/* Styles moved to global styles.scss to avoid encapsulation issues on sub-routes */
+:host {
+    display: block;
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
+}

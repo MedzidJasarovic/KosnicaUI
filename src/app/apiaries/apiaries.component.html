@@ -1,0 +1,72 @@
+<div class="dashboard-wrapper anim-fade-in">
+    <app-sidebar></app-sidebar>
+
+    <main class="main-content">
+        <header class="content-header">
+            <div class="welcome">
+                <h1>Pčelinjaci 🌳</h1>
+                <p>Upravljajte svim vašim pčelinjacima na jednom mjestu.</p>
+            </div>
+            <button class="btn-new" (click)="showCreateModal = true">
+                + Novi pčelinjak
+            </button>
+        </header>
+
+        <!-- Map Overview Panel -->
+        <div class="glass-card map-panel anim-fade-in" *ngIf="!loading && apiaries.length > 0">
+            <div id="apiaries-overview-map"></div>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div class="apiaries-grid" *ngIf="loading">
+            <div class="glass-card apiary-card skeleton" *ngFor="let i of [1,2,3]">
+                <div class="skeleton-line wide"></div>
+                <div class="skeleton-line short"></div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="glass-card empty-state" *ngIf="!loading && apiaries.length === 0">
+            <div class="empty-icon">🌳</div>
+            <p>Nemate evidentiranih pčelinjaka.</p>
+            <button class="btn-new" (click)="showCreateModal = true">Dodajte prvi pčelinjak</button>
+        </div>
+
+        <!-- Apiaries grid -->
+        <div class="apiaries-grid" *ngIf="!loading && apiaries.length > 0">
+            <div class="glass-card apiary-card" *ngFor="let apiary of apiaries" [routerLink]="['/apiaries', apiary.id]">
+                <div class="apiary-icon">🌳</div>
+                <div class="apiary-info">
+                    <h3>{{ apiary.name }}</h3>
+                    <p class="coords">📍 {{ apiary.latitude }}, {{ apiary.longitude }}</p>
+                    <div class="hive-badge">
+                        <img src="assets/hives/hive-farar.png" style="width:16px; margin-right:4px;">
+                        {{ apiary.hiveCount }} {{ apiary.hiveCount === 1 ? 'košnica' : 'košnice' }}
+                    </div>
+                </div>
+                <div class="apiary-actions">
+                    <button class="btn-icon" title="Uredi" (click)="openEditModal($event, apiary)">✏️</button>
+                    <button class="btn-icon btn-danger" title="Obriši"
+                        (click)="deleteApiary($event, apiary.id)">🗑️</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Create/Edit Modal -->
+<app-create-apiary-modal *ngIf="showCreateModal" [existingApiaries]="apiaries" [apiaryToEdit]="apiaryToEdit"
+    (closed)="closeModal()" (created)="onModalCreated()">
+</app-create-apiary-modal>
+
+<!-- Custom Delete Confirm Modal -->
+<app-confirm-modal 
+    [isOpen]="showDeleteConfirm" 
+    title="Obriši pčelinjak" 
+    message="Jeste li sigurni da želite obrisati ovaj pčelinjak? Ovo će nepovratno obrisati pčelinjak i sve košnice koje se nalaze u njemu." 
+    confirmText="Obriši pčelinjak" 
+    cancelText="Odustani" 
+    [isDanger]="true"
+    (confirmed)="onConfirmDelete()" 
+    (cancelled)="onCancelDelete()">
+</app-confirm-modal>
