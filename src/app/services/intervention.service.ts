@@ -28,7 +28,7 @@ export interface CreateInterventionPayload {
     providedIn: 'root'
 })
 export class InterventionService {
-    private apiUrl = 'http://localhost:5264/api/interventions';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/interventions';
 
     constructor(private http: HttpClient) { }
 

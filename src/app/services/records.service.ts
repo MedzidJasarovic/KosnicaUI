@@ -32,10 +32,10 @@ export interface YieldRecord {
 
 @Injectable({ providedIn: 'root' })
 export class RecordsService {
-    private treatmentsUrl = 'http://localhost:5264/api/treatments';
-    private yieldsUrl = 'http://localhost:5264/api/yields';
+    private treatmentsUrl = 'https://kosnicaapi.onrender.com/api/treatments';
+    private yieldsUrl = 'https://kosnicaapi.onrender.com/api/yields';
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
     getTreatments(apiaryId?: number, hiveId?: number): Observable<TreatmentRecord[]> {
         let params = new HttpParams();

@@ -14,7 +14,7 @@ export interface WeatherData {
     providedIn: 'root'
 })
 export class WeatherService {
-    private apiUrl = 'http://localhost:5264/api/weather';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/weather';
 
     constructor(private http: HttpClient) { }
 

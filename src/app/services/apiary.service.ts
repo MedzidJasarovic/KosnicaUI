@@ -20,7 +20,7 @@ export interface CreateApiaryPayload {
     providedIn: 'root'
 })
 export class ApiaryService {
-    private apiUrl = 'http://localhost:5264/api/apiaries';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/apiaries';
 
     constructor(private http: HttpClient) { }
 

@@ -27,7 +27,7 @@ export interface CreateHivePayload {
     providedIn: 'root'
 })
 export class HiveService {
-    private apiUrl = 'http://localhost:5264/api/apiaries';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/apiaries';
 
     constructor(private http: HttpClient) { }
 

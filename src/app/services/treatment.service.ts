@@ -28,9 +28,9 @@ export interface CreateTreatmentPayload {
 
 @Injectable({ providedIn: 'root' })
 export class TreatmentService {
-    private apiUrl = 'http://localhost:5264/api/treatments';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/treatments';
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
     getTreatments(apiaryId?: number, hiveId?: number): Observable<TreatmentRecord[]> {
         let params = new HttpParams();

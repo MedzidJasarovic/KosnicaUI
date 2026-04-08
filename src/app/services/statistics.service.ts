@@ -12,7 +12,7 @@ export interface DashboardStats {
     providedIn: 'root'
 })
 export class StatisticsService {
-    private apiUrl = 'http://localhost:5264/api/statistics';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/statistics';
 
     constructor(private http: HttpClient) { }
 

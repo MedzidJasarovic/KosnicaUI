@@ -33,7 +33,7 @@ export interface CreateShipmentPayload {
     providedIn: 'root'
 })
 export class ShipmentService {
-    private apiUrl = 'http://localhost:5264/api/storage';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/storage';
 
     constructor(private http: HttpClient) { }
 

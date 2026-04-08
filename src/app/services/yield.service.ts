@@ -32,7 +32,7 @@ export interface YieldStatistics {
     providedIn: 'root'
 })
 export class YieldService {
-    private apiUrl = 'http://localhost:5264/api/yields';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/yields';
 
     constructor(private http: HttpClient) { }
 
