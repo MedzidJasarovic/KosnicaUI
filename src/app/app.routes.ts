@@ -6,6 +6,7 @@ import { ApiariesComponent } from './apiaries/apiaries.component';
 import { ApiaryDetailComponent } from './apiaries/apiary-detail/apiary-detail.component';
 import { StorageComponent } from './storage/storage.component';
 import { InterventionsComponent } from './interventions/interventions.component';
+import { ColleaguesComponent } from './colleagues/colleagues.component';
 import { authGuard } from './guards/auth.guard';
 
 
@@ -15,6 +16,7 @@ export const routes: Routes = [
     { path: 'apiaries/:id', component: ApiaryDetailComponent, canActivate: [authGuard] },
     { path: 'storage', component: StorageComponent, canActivate: [authGuard] },
     { path: 'interventions', component: InterventionsComponent, canActivate: [authGuard] },
+    { path: 'colleagues', component: ColleaguesComponent, canActivate: [authGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: '**', redirectTo: '' }

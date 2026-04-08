@@ -1,0 +1,130 @@
+.colleagues-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.colleague-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    &.is-currentUser {
+        border-color: #f7b733;
+        box-shadow: 0 0 15px rgba(247, 183, 51, 0.2);
+    }
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    position: relative;
+
+    .avatar {
+        font-size: 2.5rem;
+        background: rgba(247, 183, 51, 0.1);
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .name-info {
+        h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .email {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+    }
+
+    .self-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #f7b733;
+        color: #000;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+}
+
+.card-body {
+    .employer-info {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 10px;
+
+        .label {
+            display: block;
+            font-size: 0.8rem;
+            color: #f7b733;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .employer-details {
+            p {
+                margin: 2px 0;
+            }
+
+            .emp-name {
+                font-weight: 500;
+                color: #fff;
+            }
+
+            .emp-email {
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.7);
+            }
+        }
+
+        .no-emp {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+    }
+}
+
+.loading-state, .error-msg, .no-data {
+    text-align: center;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(247, 183, 51, 0.1);
+    border-left-color: #f7b733;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

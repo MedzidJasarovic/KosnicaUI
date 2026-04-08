@@ -11,6 +11,17 @@ export interface User {
     lastName: string;
 }
 
+export interface VetColleague {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    isCurrentUser: boolean;
+    employerFirstName: string | null;
+    employerLastName: string | null;
+    employerEmail: string | null;
+}
+
 export interface AuthResponse {
     token: string;
     userId: number;
@@ -25,6 +36,7 @@ export interface AuthResponse {
 })
 export class AuthService {
     private apiUrl = 'https://kosnicaapi.onrender.com/api/auth';
+    //private apiUrl = 'http://localhost:5264/api/auth';
 
     // Using Angular Signals for reactive state
     currentUser = signal<User | null>(this.getUserFromStorage());
@@ -43,6 +55,10 @@ export class AuthService {
 
     registerTeamMember(payload: { firstName: string; lastName: string; email: string; password: string; role: string }): Observable<any> {
         return this.http.post(`${this.apiUrl}/register-team`, payload);
+    }
+
+    getColleagues(): Observable<VetColleague[]> {
+        return this.http.get<VetColleague[]>(`${this.apiUrl}/colleagues`);
     }
 
     logout() {

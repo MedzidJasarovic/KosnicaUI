@@ -1,0 +1,53 @@
+<div class="dashboard-container">
+    <app-sidebar></app-sidebar>
+    
+    <main class="main-content">
+        <header class="header">
+            <div class="header-left">
+                <h1>Moji Imenjaci (Veterinari)</h1>
+                <p>Lista svih veterinara koji imaju isto ime i prezime kao Vi: {{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</p>
+            </div>
+        </header>
+
+        <section class="content-section">
+            <div *ngIf="loading" class="loading-state">
+                <div class="spinner"></div>
+                <p>Učitavanje lista kolega...</p>
+            </div>
+
+            <div *ngIf="error" class="error-msg">
+                {{ error }}
+            </div>
+
+            <div *ngIf="!loading && !error" class="colleagues-grid">
+                <div *ngFor="let colleague of colleagues" class="colleague-card" [class.is-currentUser]="colleague.isCurrentUser">
+                    <div class="card-header">
+                        <div class="avatar">👨‍⚕️</div>
+                        <div class="name-info">
+                            <h3>{{ colleague.firstName }} {{ colleague.lastName }}</h3>
+                            <span class="email">{{ colleague.email }}</span>
+                        </div>
+                        <div *ngIf="colleague.isCurrentUser" class="self-badge">Vi</div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="employer-info">
+                            <span class="label">Radi za:</span>
+                            <div class="employer-details" *ngIf="colleague.employerFirstName; else noEmployer">
+                                <p class="emp-name">{{ colleague.employerFirstName }} {{ colleague.employerLastName }}</p>
+                                <p class="emp-email">{{ colleague.employerEmail }}</p>
+                            </div>
+                            <ng-template #noEmployer>
+                                <p class="no-emp">Samostalni veterinar / Nema poslodavca</p>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="colleagues.length === 0" class="no-data">
+                    <p>Nisu pronađeni drugi veterinari sa Vašim imenom i prezimenom.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>

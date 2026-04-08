@@ -17,6 +17,9 @@
         <a class="nav-item" routerLink="/storage" routerLinkActive="active">
             <img src="assets/bee-in-box.png" alt="Storage" class="nav-icon-img"> Magacin
         </a>
+        <a *ngIf="user()?.role === 'Veterinarian'" class="nav-item" routerLink="/colleagues" routerLinkActive="active">
+            <span class="icon"></span> Kolege
+        </a>
     </nav>
 
     <div class="spacer"></div>
