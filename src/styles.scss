@@ -201,7 +201,7 @@ body {
         color: var(--c-white, #ffffff) !important;
       }
 
-      &.active {
+        &.active {
         background: linear-gradient(90deg, 
           #FFCA28 0%, #FFCA28 65%, 
           #3E2723 65%, #3E2723 70%, 
@@ -213,6 +213,17 @@ body {
           #3E2723 95%, #3E2723 100%
         ) !important;
         color: #212121 !important;
+
+        &[routerLink="/colleagues"] {
+          background: linear-gradient(90deg, 
+            #FFCA28 0%, #FFCA28 75%, 
+            #3E2723 75%, #3E2723 80%,
+            #FFCA28 80%, #FFCA28 85%,
+            #3E2723 85%, #3E2723 90%,
+            #FFCA28 90%, #FFCA28 95%,
+            #3E2723 95%, #3E2723 100%
+          ) !important;
+        }
         
         .icon, .nav-icon-img {
           filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
