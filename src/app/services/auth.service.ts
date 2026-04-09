@@ -35,8 +35,8 @@ export interface AuthResponse {
     providedIn: 'root'
 })
 export class AuthService {
-    //private apiUrl = 'https://kosnicaapi.onrender.com/api/auth';
-    private apiUrl = 'http://localhost:5264/api/auth';
+    private apiUrl = 'https://kosnicaapi.onrender.com/api/auth';
+    //private apiUrl = 'http://localhost:5264/api/auth';
 
     // Using Angular Signals for reactive state
     currentUser = signal<User | null>(this.getUserFromStorage());
