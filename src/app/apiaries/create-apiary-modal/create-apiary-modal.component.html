@@ -36,3 +36,14 @@
         </div>
     </div>
 </div>
+
+<app-confirm-modal
+    [isOpen]="showProximityConfirm"
+    title="Blizina pčelinjaka"
+    [message]="proximityWarningMessage"
+    confirmText="Da, nastavi"
+    cancelText="Ne, promijeniću lokaciju"
+    [isDanger]="false"
+    (confirmed)="executeSave()"
+    (cancelled)="showProximityConfirm = false">
+</app-confirm-modal>

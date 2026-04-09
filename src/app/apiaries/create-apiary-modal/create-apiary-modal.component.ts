@@ -2,12 +2,13 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, Inpu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet';
-import { ApiaryService, CreateApiaryPayload, Apiary } from '../../services/apiary.service';
+import { CreateApiaryPayload, Apiary, ApiaryService } from '../../services/apiary.service';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
     selector: 'app-create-apiary-modal',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, ConfirmModalComponent],
     templateUrl: './create-apiary-modal.component.html',
     styleUrl: './create-apiary-modal.component.scss'
 })
@@ -22,6 +23,8 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
     lng: number | null = null;
     isSubmitting = false;
     error = '';
+    showProximityConfirm = false;
+    proximityWarningMessage = '';
 
     private map!: L.Map;
     private marker: L.Marker | null = null;
@@ -101,8 +104,26 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
     onSubmit(): void {
         if (!this.canSubmit) return;
 
+        // Check proximity if not editing the SAME one
+        const closeApiary = this.existingApiaries.find(a => {
+            if (this.apiaryToEdit && a.id === this.apiaryToEdit.id) return false;
+            const dist = this.calculateDistance(this.lat!, this.lng!, a.latitude, a.longitude);
+            return dist <= 3.0; // 3 kilometers
+        });
+
+        if (closeApiary && !this.showProximityConfirm) {
+            this.proximityWarningMessage = `Pčelinjak se nalazi u krugu od 3km od pčelinjaka "${closeApiary.name}". Jeste li sigurni da želite da kreirate/sačuvate pčelinjak na ovoj lokaciji?`;
+            this.showProximityConfirm = true;
+            return;
+        }
+
+        this.executeSave();
+    }
+
+    executeSave(): void {
         this.isSubmitting = true;
         this.error = '';
+        this.showProximityConfirm = false;
 
         const payload: CreateApiaryPayload = {
             name: this.name.trim(),
@@ -137,5 +158,17 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
 
     onClose(): void {
         this.closed.emit();
+    }
+
+    private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLon = (lon2 - lon1) * (Math.PI / 180);
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 }
