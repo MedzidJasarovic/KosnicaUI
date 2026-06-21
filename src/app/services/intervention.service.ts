@@ -1,3 +1,4 @@
+import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -28,7 +29,7 @@ export interface CreateInterventionPayload {
     providedIn: 'root'
 })
 export class InterventionService {
-    private apiUrl = 'https://kosnicaapi.onrender.com/api/interventions';
+    private apiUrl = environment.apiUrl + '/interventions';
 
     constructor(private http: HttpClient) { }
 

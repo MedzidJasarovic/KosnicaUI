@@ -34,7 +34,7 @@
             </div>
 
             <div class="grid-container glass-card" *ngIf="!loading">
-                <div class="apiary-field">
+                <div class="apiary-field" [style.--cell-size.px]="getCellSize()" [style.--hive-img-size.px]="getHiveImgSize()">
                     <div class="grid-row" *ngFor="let y of gridRows">
                         <div class="grid-cell" *ngFor="let x of gridCols" [class.occupied]="getHiveAt(x, y)"
                             (click)="onCellClick(x, y)">
@@ -76,13 +76,23 @@
         </main>
 
         <aside class="right-sidebar" *ngIf="!loading">
-            <h3>Zaostali poslovi</h3>
-            <p class="subtitle" [style.visibility]="(missingHarvests.length > 0 || missingTreatments.length > 0) ? 'visible' : 'hidden'">
-                Zabeležili ste radove, ali niste upisali detalje o prinosu ili lekovima.
+            <h3>Zadaci i zaostali poslovi</h3>
+            <p class="subtitle" [style.visibility]="(missingHarvests.length > 0 || missingTreatments.length > 0 || plannedInterventions.length > 0) ? 'visible' : 'hidden'">
+                Pregled predstojećih planiranih radova i neregistrovanih detalja o prinosu ili lekovima.
             </p>
             
             <div class="tasks-wrapper glass-card">
                 <div class="tasks-list">
+                    <!-- Planned Tasks -->
+                    <div class="missing-card anim-slide-up planned-task" *ngFor="let pi of plannedInterventions" [routerLink]="['/interventions']" style="border-left: 4px solid var(--c-amber);">
+                        <div class="card-icon">📅</div>
+                        <div class="card-info">
+                            <strong>{{ getInterventionTypeName(pi.type) }}</strong>
+                            <span *ngIf="pi.hiveIdentifier">Košnica: {{ pi.hiveIdentifier }}</span>
+                            <small>Datum: {{ pi.plannedDate | date:'dd.MM.yyyy' }}</small>
+                        </div>
+                    </div>
+
                     <!-- Harvest Tasks (Visible to Beekeeper & Assistant) -->
                     <div class="missing-card anim-slide-up" *ngFor="let h of missingHarvests" (click)="openYieldModal(h)">
                         <div class="card-icon">🍯</div>
@@ -104,9 +114,9 @@
                     </div>
                 </div>
 
-                <div class="empty-tasks" *ngIf="missingHarvests.length === 0 && missingTreatments.length === 0">
+                <div class="empty-tasks" *ngIf="missingHarvests.length === 0 && missingTreatments.length === 0 && plannedInterventions.length === 0">
                     <img src="assets/resting-bee.png" alt="Resting Bee" class="resting-bee-img">
-                    <p>Nema zaostalih poslova...</p>
+                    <p>Nema aktivnih zadataka...</p>
                 </div>
             </div>
         </aside>

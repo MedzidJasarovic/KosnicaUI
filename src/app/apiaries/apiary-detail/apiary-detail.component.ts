@@ -43,6 +43,7 @@ export class ApiaryDetailComponent implements OnInit {
     // Filtering State
     activeFilter: string = 'all';
     apiaryInterventions: Intervention[] = [];
+    plannedInterventions: Intervention[] = [];
 
     // Yields State
     apiaryYields: YieldRecord[] = [];
@@ -84,6 +85,18 @@ export class ApiaryDetailComponent implements OnInit {
         this.loading = true;
         this.apiaryService.getApiaries().subscribe((apiaries: Apiary[]) => {
             this.apiary = apiaries.find(a => a.id === this.apiaryId) || null;
+
+            if (this.apiary) {
+                const area = this.apiary.area || 10;
+                if (area <= 2) this.gridSize = 4;
+                else if (area <= 4) this.gridSize = 5;
+                else if (area <= 6) this.gridSize = 6;
+                else if (area <= 8) this.gridSize = 7;
+                else this.gridSize = 8;
+
+                this.gridRows = Array(this.gridSize).fill(0).map((_, i) => i);
+                this.gridCols = Array(this.gridSize).fill(0).map((_, i) => i);
+            }
 
             this.hiveService.getHives(this.apiaryId).subscribe({
                 next: (hives: Hive[]) => {
@@ -129,6 +142,7 @@ export class ApiaryDetailComponent implements OnInit {
     calculatePendingTasks(): void {
         this.calculateMissingHarvests();
         this.calculateMissingTreatments();
+        this.calculatePlannedInterventions();
     }
 
     calculateMissingHarvests(): void {
@@ -330,5 +344,38 @@ export class ApiaryDetailComponent implements OnInit {
     onTreatmentModalSaved(): void {
         this.showTreatmentModal = false;
         this.loadTreatments();
+    }
+
+    calculatePlannedInterventions(): void {
+        this.plannedInterventions = this.apiaryInterventions.filter(i => 
+            String(i.status) === '0' || String(i.status) === 'Planned'
+        ).sort((a, b) => new Date(a.plannedDate).getTime() - new Date(b.plannedDate).getTime());
+    }
+
+    getInterventionTypeName(type: any): string {
+        const t = String(type);
+        if (t === '0' || t === 'SpringInspection') return 'Prolećni pregled';
+        if (t === '1' || t === 'Wintering') return 'Uzimljavanje';
+        if (t === '2' || t === 'Feeding') return 'Prihranjivanje';
+        if (t === '3' || t === 'Harvest') return 'Vrcanje';
+        if (t === '4' || t === 'Treatment') return 'Tretman Lekovima';
+        if (t === '5' || t === 'Other') return 'Ostalo';
+        return 'Akcija';
+    }
+
+    getCellSize(): number {
+        if (this.gridSize === 4) return 110;
+        if (this.gridSize === 5) return 95;
+        if (this.gridSize === 6) return 85;
+        if (this.gridSize === 7) return 80;
+        return 80;
+    }
+
+    getHiveImgSize(): number {
+        if (this.gridSize === 4) return 88;
+        if (this.gridSize === 5) return 76;
+        if (this.gridSize === 6) return 68;
+        if (this.gridSize === 7) return 64;
+        return 64;
     }
 }

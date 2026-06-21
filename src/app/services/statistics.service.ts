@@ -1,3 +1,4 @@
+import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,7 +13,7 @@ export interface DashboardStats {
     providedIn: 'root'
 })
 export class StatisticsService {
-    private apiUrl = 'https://kosnicaapi.onrender.com/api/statistics';
+    private apiUrl = environment.apiUrl + '/statistics';
 
     constructor(private http: HttpClient) { }
 

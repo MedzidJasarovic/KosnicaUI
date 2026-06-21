@@ -1,3 +1,4 @@
+import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -27,7 +28,7 @@ export interface CreateHivePayload {
     providedIn: 'root'
 })
 export class HiveService {
-    private apiUrl = 'https://kosnicaapi.onrender.com/api/apiaries';
+    private apiUrl = environment.apiUrl + '/apiaries';
 
     constructor(private http: HttpClient) { }
 

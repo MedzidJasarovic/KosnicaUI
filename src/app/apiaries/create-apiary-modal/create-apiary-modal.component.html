@@ -24,6 +24,12 @@
                     class="form-input" />
             </div>
 
+            <div class="form-group">
+                <label for="apiary-area">Površina u arima (1 - 10)</label>
+                <input id="apiary-area" type="number" [(ngModel)]="area" min="1" max="10" placeholder="npr. 10"
+                    class="form-input" />
+            </div>
+
             <p class="error-msg" *ngIf="error">{{ error }}</p>
 
             <div class="hint-msg" *ngIf="lat === null">

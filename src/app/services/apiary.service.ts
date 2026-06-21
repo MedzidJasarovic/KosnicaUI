@@ -1,3 +1,4 @@
+import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,19 +9,21 @@ export interface Apiary {
     latitude: number;
     longitude: number;
     hiveCount: number;
+    area: number;
 }
 
 export interface CreateApiaryPayload {
     name: string;
     latitude: number;
     longitude: number;
+    area: number;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiaryService {
-    private apiUrl = 'https://kosnicaapi.onrender.com/api/apiaries';
+    private apiUrl = environment.apiUrl + '/apiaries';
 
     constructor(private http: HttpClient) { }
 

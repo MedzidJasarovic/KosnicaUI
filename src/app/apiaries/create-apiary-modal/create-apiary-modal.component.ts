@@ -21,6 +21,7 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
     name = '';
     lat: number | null = null;
     lng: number | null = null;
+    area = 10;
     isSubmitting = false;
     error = '';
     showProximityConfirm = false;
@@ -36,6 +37,7 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
             this.name = this.apiaryToEdit.name;
             this.lat = this.apiaryToEdit.latitude;
             this.lng = this.apiaryToEdit.longitude;
+            this.area = this.apiaryToEdit.area || 10;
         }
     }
 
@@ -98,7 +100,7 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
     }
 
     get canSubmit(): boolean {
-        return this.name.trim().length > 0 && this.lat !== null && this.lng !== null && !this.isSubmitting;
+        return this.name.trim().length > 0 && this.lat !== null && this.lng !== null && this.area >= 1 && this.area <= 10 && !this.isSubmitting;
     }
 
     onSubmit(): void {
@@ -128,7 +130,8 @@ export class CreateApiaryModalComponent implements OnInit, AfterViewInit, OnDest
         const payload: CreateApiaryPayload = {
             name: this.name.trim(),
             latitude: this.lat!,
-            longitude: this.lng!
+            longitude: this.lng!,
+            area: this.area
         };
 
         if (this.apiaryToEdit) {

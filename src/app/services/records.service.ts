@@ -1,3 +1,4 @@
+import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -32,8 +33,8 @@ export interface YieldRecord {
 
 @Injectable({ providedIn: 'root' })
 export class RecordsService {
-    private treatmentsUrl = 'https://kosnicaapi.onrender.com/api/treatments';
-    private yieldsUrl = 'https://kosnicaapi.onrender.com/api/yields';
+    private treatmentsUrl = environment.apiUrl + '/treatments';
+    private yieldsUrl = environment.apiUrl + '/yields';
 
     constructor(private http: HttpClient) { }
 

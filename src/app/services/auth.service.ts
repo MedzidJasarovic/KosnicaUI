@@ -1,3 +1,4 @@
+import { environment } from "../../environments/environment";
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -35,8 +36,8 @@ export interface AuthResponse {
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'https://kosnicaapi.onrender.com/api/auth';
-    //private apiUrl = 'http://localhost:5264/api/auth';
+    private apiUrl = environment.apiUrl + '/auth';
+    //private apiUrl = environment.apiUrl + '/auth';
 
     // Using Angular Signals for reactive state
     currentUser = signal<User | null>(this.getUserFromStorage());
