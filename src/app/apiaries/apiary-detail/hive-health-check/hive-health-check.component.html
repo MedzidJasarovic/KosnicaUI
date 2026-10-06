@@ -1,0 +1,80 @@
+<!-- Upload -->
+<div class="glass-card upload-card">
+    <h3>Analiza fotografije</h3>
+    <p class="hint">
+        Fotografišite jednu pčelu izbliza, tako da ispuni veći deo kadra. Model je
+        treniran na snimcima pčela odozgo, pa je to najpouzdaniji ugao.
+    </p>
+
+    <div class="upload-row">
+        <label class="btn-outline file-btn">
+            📷 {{ selectedFile ? 'Izaberi drugu' : 'Izaberi fotografiju' }}
+            <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFileSelected($event)" hidden>
+        </label>
+        <span class="file-name" *ngIf="selectedFile">{{ selectedFile.name }}</span>
+    </div>
+
+    <div class="preview" *ngIf="previewUrl">
+        <img [src]="previewUrl" alt="Izabrana fotografija">
+        <div class="actions-row">
+            <button class="btn-outline" (click)="cancelSelection()" [disabled]="isAnalyzing">Otkaži</button>
+            <button class="btn-primary" (click)="analyze()" [disabled]="isAnalyzing">
+                {{ isAnalyzing ? 'Analiziram...' : 'Analiziraj' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Najnoviji rezultat -->
+<div class="glass-card result-card label-{{ latest.predictedLabel }}" *ngIf="latest">
+    <div class="result-main">
+        <img [src]="beeHealthService.imageSrc(latest.imageUrl)" alt="Analizirana fotografija">
+        <div>
+            <span class="health-badge label-{{ latest.predictedLabel }}">{{ labelName(latest.predictedLabel) }}</span>
+            <div class="confidence">{{ percent(latest.confidence) }}</div>
+            <div class="confidence-caption">verovatnoća procene</div>
+        </div>
+    </div>
+
+    <div class="prob-list">
+        <div class="prob-row" *ngFor="let l of probabilityLabels(latest)">
+            <span class="prob-label">{{ labelName(l) }}</span>
+            <div class="prob-bar"><div class="fill label-{{ l }}" [style.width.%]="(latest.probabilities[l] ?? 0) * 100"></div></div>
+            <span class="prob-val">{{ percent(latest.probabilities[l]) }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Istorija pregleda -->
+<h3 class="history-title">Istorija pregleda</h3>
+<div *ngIf="loadingHistory" class="loading-state">Učitavanje...</div>
+<div *ngIf="!loadingHistory && history.length === 0" class="empty-state">
+    <p>Za ovu košnicu još nema analiziranih fotografija.</p>
+</div>
+
+<div class="history-list" *ngIf="!loadingHistory && history.length > 0">
+    <div class="history-item" *ngFor="let c of history">
+        <img [src]="beeHealthService.imageSrc(c.imageUrl)" alt="Fotografija pregleda">
+        <div class="history-info">
+            <div>
+                <span class="health-badge small label-{{ c.predictedLabel }}">{{ labelName(c.predictedLabel) }}</span>
+                <span class="history-conf">{{ percent(c.confidence) }}</span>
+            </div>
+            <div class="history-meta">
+                {{ c.createdAt | date:'dd.MM.yyyy. HH:mm' }}<span *ngIf="c.createdByName"> · {{ c.createdByName }}</span>
+            </div>
+        </div>
+        <button class="btn-icon" title="Obriši" (click)="deleteCheck(c.id)">🗑️</button>
+    </div>
+</div>
+
+<app-confirm-modal
+    [isOpen]="showDeleteConfirm"
+    title="Obriši pregled"
+    message="Jeste li sigurni da želite obrisati ovaj pregled i njegovu fotografiju?"
+    confirmText="Obriši"
+    cancelText="Odustani"
+    [isDanger]="true"
+    (confirmed)="onConfirmDelete()"
+    (cancelled)="onCancelDelete()">
+</app-confirm-modal>

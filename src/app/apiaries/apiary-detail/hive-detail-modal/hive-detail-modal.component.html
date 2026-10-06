@@ -12,6 +12,8 @@
             (click)="activeTab = 'details'">Detalji</button>
         <button class="tab-btn" [class.active]="activeTab === 'interventions'"
             (click)="activeTab = 'interventions'">Intervencije</button>
+        <button class="tab-btn" [class.active]="activeTab === 'health'"
+            (click)="activeTab = 'health'">Zdravlje pčela</button>
     </div>
 
     <div class="modal-body scrollable-body">
@@ -183,6 +185,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Tab: Bee health (analiza fotografije) -->
+        <div *ngIf="activeTab === 'health'" class="tab-content">
+            <app-hive-health-check [hiveId]="hive.id"></app-hive-health-check>
         </div>
 
     </div>

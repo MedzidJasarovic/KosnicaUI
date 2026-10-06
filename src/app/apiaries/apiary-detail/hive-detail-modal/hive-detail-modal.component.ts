@@ -5,11 +5,12 @@ import { HiveService, Hive, CreateHivePayload } from '../../../services/hive.ser
 import { InterventionService, Intervention, CreateInterventionPayload } from '../../../services/intervention.service';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
 import { NotificationService } from '../../../services/notification.service';
+import { HiveHealthCheckComponent } from '../hive-health-check/hive-health-check.component';
 
 @Component({
   selector: 'app-hive-detail-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmModalComponent],
+  imports: [CommonModule, FormsModule, ConfirmModalComponent, HiveHealthCheckComponent],
   templateUrl: './hive-detail-modal.component.html',
   styleUrl: './hive-detail-modal.component.scss'
 })
@@ -19,7 +20,7 @@ export class HiveDetailModalComponent implements OnInit {
   @Output() closed = new EventEmitter<void>();
   @Output() updatedOrDeleted = new EventEmitter<void>();
 
-  activeTab: 'details' | 'interventions' = 'details';
+  activeTab: 'details' | 'interventions' | 'health' = 'details';
 
   // Hive Edit state
   editMode = false;
